@@ -4,14 +4,16 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import formatDate from '@/lib/utils/formatDate'
-
+import { getAllNotebookFrontMatter } from '@/lib/ipynb'
+import dateSortDesc from '@/lib/utils/dateSort'
 import NewsletterForm from '@/components/NewsletterForm'
 
 const MAX_DISPLAY = 5
 
 export async function getStaticProps() {
-  const posts = await getAllFilesFrontMatter('blog')
-
+  const blogs = await getAllFilesFrontMatter('blog')
+  const notebooks = await getAllNotebookFrontMatter('notebooks')
+  const posts = [...blogs, ...notebooks].sort((a, b) => dateSortDesc(a.date, b.date))
   return { props: { posts } }
 }
 

@@ -2,6 +2,7 @@ import { TagSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
 import ListLayout from '@/layouts/ListLayout'
 import generateRss from '@/lib/generate-rss'
+import { getAllNotebookFrontMatter } from '@/lib/ipynb'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import { getAllTags } from '@/lib/tags'
 import kebabCase from '@/lib/utils/kebabCase'
@@ -12,9 +13,10 @@ const root = process.cwd()
 
 export async function getStaticPaths() {
   const tags = await getAllTags('blog')
+  const notebookTags = await getAllTags('notebooks')
 
   return {
-    paths: Object.keys(tags).map((tag) => ({
+    paths: Object.keys({ ...tags, ...notebookTags }).map((tag) => ({
       params: {
         tag,
       },
@@ -24,8 +26,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
+  console.log(params)
   const allPosts = await getAllFilesFrontMatter('blog')
-  const filteredPosts = allPosts.filter(
+  const allNotebooks = await getAllNotebookFrontMatter('notebooks')
+
+  const filteredPosts = [...allPosts, ...allNotebooks].filter(
     (post) => post.draft !== true && post.tags.map((t) => kebabCase(t)).includes(params.tag)
   )
 

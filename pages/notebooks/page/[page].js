@@ -1,15 +1,13 @@
 import { PageSEO } from '@/components/SEO'
 import siteMetadata from '@/data/siteMetadata'
-import { getAllFilesFrontMatter } from '@/lib/mdx'
 import { getAllNotebookFrontMatter } from '@/lib/ipynb'
 import dateSortDesc from '@/lib/utils/dateSort'
 import ListLayout from '@/layouts/ListLayout'
 import { POSTS_PER_PAGE } from '../../blog'
 
 export async function getStaticPaths() {
-  const blogs = await getAllFilesFrontMatter('blog')
   const notebooks = await getAllNotebookFrontMatter('notebooks')
-  const totalPosts = [...blogs, ...notebooks].sort((a, b) => dateSortDesc(a.date, b.date))
+  const totalPosts = [...notebooks].sort((a, b) => dateSortDesc(a.date, b.date))
   const totalPages = Math.ceil(totalPosts.length / POSTS_PER_PAGE)
   const paths = Array.from({ length: totalPages }, (_, i) => ({
     params: { page: (i + 1).toString() },
@@ -25,9 +23,8 @@ export async function getStaticProps(context) {
   const {
     params: { page },
   } = context
-  const blogs = await getAllFilesFrontMatter('blog')
   const notebooks = await getAllNotebookFrontMatter('notebooks')
-  const posts = [...blogs, ...notebooks].sort((a, b) => dateSortDesc(a.date, b.date))
+  const posts = [...notebooks].sort((a, b) => dateSortDesc(a.date, b.date))
   const pageNumber = parseInt(page)
   const initialDisplayPosts = posts.slice(
     POSTS_PER_PAGE * (pageNumber - 1),
@@ -55,6 +52,7 @@ export default function PostPage({ posts, initialDisplayPosts, pagination }) {
         posts={posts}
         initialDisplayPosts={initialDisplayPosts}
         pagination={pagination}
+        slugPath="/"
         title="All Posts"
       />
     </>

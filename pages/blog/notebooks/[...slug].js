@@ -2,18 +2,24 @@ import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
-import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
-import { getAllNotebookFrontMatter } from '@/lib/ipynb'
+import { getFileBySlug, getAllFilesFrontMatter } from '@/lib/mdx'
 import dateSortDesc from '@/lib/utils/dateSort'
+import {
+  getNotebooks,
+  formatNotebookSlug,
+  getAllNotebookFrontMatter,
+  getNotebookBySlug,
+  getDataSlug,
+} from '@/lib/ipynb'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
 export async function getStaticPaths() {
-  const posts = getFiles('blog')
+  const posts = getNotebooks('notebooks')
   return {
     paths: posts.map((p) => ({
       params: {
-        slug: formatSlug(p).split('/'),
+        slug: getDataSlug(formatNotebookSlug(p)).split('/'),
       },
     })),
     fallback: false,
@@ -24,11 +30,14 @@ export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
   const allMDX = await getAllFilesFrontMatter('blog')
   const allPosts = [...allNotebooks, ...allMDX].sort((a, b) => dateSortDesc(a.date, b.date))
-  const postIndex = allPosts.findIndex((post) => formatSlug(post.slug) === params.slug.join('/'))
+  const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
+  const postIndex = allPosts.findIndex(
+    (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')
+  )
   const prev = allPosts[postIndex + 1] || null
   const next = allPosts[postIndex - 1] || null
-  const post = await getFileBySlug('blog', params.slug.join('/'))
-  const authorList = post.frontMatter.authors || ['default']
+  const post = await getNotebookBySlug('notebooks', params.slug.join('/'))
+  const authorList = post.authors || ['default']
   const authorPromise = authorList.map(async (author) => {
     const authorResults = await getFileBySlug('authors', [author])
     return authorResults.frontMatter
@@ -36,28 +45,28 @@ export async function getStaticProps({ params }) {
   const authorDetails = await Promise.all(authorPromise)
 
   // rss
-  const rss = generateRss(allPosts)
+  const rss = generateRss(allNotebooks)
   fs.writeFileSync('./public/feed.xml', rss)
 
-  return { props: { post, authorDetails, prev, next } }
+  return { props: { notebook, authorDetails, prev, next } }
 }
 
-export default function Blog({ post, authorDetails, prev, next }) {
-  const { mdxSource, toc, frontMatter } = post
-
+export default function Notebook({ notebook, authorDetails, prev, next }) {
+  const { frontMatter, toc, nbJSON } = notebook
   return (
     <>
-      {frontMatter.draft !== true ? (
-        <MDXLayoutRenderer
-          layout={frontMatter.layout || DEFAULT_LAYOUT}
-          toc={toc}
-          mdxSource={mdxSource}
-          frontMatter={frontMatter}
-          authorDetails={authorDetails}
-          prev={prev}
-          next={next}
-        />
+      {notebook.frontMatter.draft !== true ? (
+        <p> notebook goes here </p>
       ) : (
+        // <MDXLayoutRenderer
+        //   layout={frontMatter.draft || DEFAULT_LAYOUT}
+        //   toc={toc}
+        //   // mdxSource={mdxSource}
+        //   frontMatter={frontMatter}
+        //   authorDetails={authorDetails}
+        //   prev={prev}
+        //   next={next}
+        // />
         <div className="mt-24 text-center">
           <PageTitle>
             Under Construction{' '}

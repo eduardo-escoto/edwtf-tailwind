@@ -7,8 +7,8 @@ import kebabCase from '@/lib/utils/kebabCase'
 
 export async function getStaticProps() {
   const tags = await getAllTags('blog')
-
-  return { props: { tags } }
+  const notebookTags = await getAllTags('notebooks')
+  return { props: { tags: { ...tags, ...notebookTags } } }
 }
 
 export default function Tags({ tags }) {

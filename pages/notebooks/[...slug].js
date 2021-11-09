@@ -1,7 +1,8 @@
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
-import { MDXLayoutRenderer } from '@/components/MDXComponents'
+import { NotebookRenderer } from '@/lib/renderNotebook'
+import PostLayout from '@/layouts/PostLayout'
 import { getFileBySlug } from '@/lib/mdx'
 import {
   getNotebooks,
@@ -47,9 +48,30 @@ export async function getStaticProps({ params }) {
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
+  const { frontMatter, toc, nbJSON, slug } = notebook
+  const NBRenderer = NotebookRenderer(nbJSON)
   return (
     <>
-      <p>yo</p>
+      {notebook.frontMatter.draft !== true ? (
+        <PostLayout
+          frontMatter={frontMatter}
+          authorDetails={authorDetails}
+          next={next}
+          prev={prev}
+          slugPath={'/'}
+        >
+          {NBRenderer}
+        </PostLayout>
+      ) : (
+        <div className="mt-24 text-center">
+          <PageTitle>
+            Under Construction{' '}
+            <span role="img" aria-label="roadwork sign">
+              🚧
+            </span>
+          </PageTitle>
+        </div>
+      )}
     </>
   )
 }

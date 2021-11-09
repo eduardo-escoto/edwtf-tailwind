@@ -11,9 +11,9 @@ const siteMetadata = {
   socialBanner: '/static/images/twitter-card.png',
   email: 'me@eduardo.wtf',
   github: 'https://github.com/eduardo-exists',
-  twitter: 'https://twitter.com/Twitter',
-  facebook: 'https://facebook.com',
-  youtube: 'https://youtube.com',
+  // twitter: 'https://twitter.com/Twitter',
+  // facebook: 'https://facebook.com',
+  // youtube: 'https://youtube.com',
   linkedin: 'https://www.linkedin.com/in/eduardo-exists',
   locale: 'en-US',
   analytics: {

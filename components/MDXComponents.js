@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { getMDXComponent } from 'mdx-bundler/client'
 import Image from './Image'
 import CustomLink from './Link'
@@ -20,9 +20,7 @@ export const MDXComponents = {
 }
 
 export const MDXLayoutRenderer = ({ layout, mdxSource, ...rest }) => {
-  const [state, setState] = useState(false)
-  useEffect(() => setState(true), [])
   const MDXLayout = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
 
-  return state ? <MDXLayout layout={layout} components={MDXComponents} {...rest} /> : null
+  return <MDXLayout layout={layout} components={MDXComponents} {...rest} />
 }

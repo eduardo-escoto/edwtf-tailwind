@@ -1,10 +1,36 @@
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
-import { MDXLayoutRenderer } from '@/components/MDXComponents'
+// import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
+import PostLayout from '@/layouts/PostLayout'
+import PostSimple from '@/layouts/PostSimple'
 import { getAllNotebookFrontMatter } from '@/lib/ipynb'
 import dateSortDesc from '@/lib/utils/dateSort'
+import { useState, useEffect, useMemo } from 'react'
+import { getMDXComponent } from 'mdx-bundler/client'
+import Image from '@/components/Image'
+import CustomLink from '@/components/Link'
+import TOCInline from '@/components/TOCInline'
+import Pre from '@/components/Pre'
+import { BlogNewsletterForm } from '@/components/NewsletterForm'
+
+export const MDXComponents = {
+  Image,
+  TOCInline,
+  a: CustomLink,
+  pre: Pre,
+  BlogNewsletterForm: BlogNewsletterForm,
+  // wrapper: ({ components, layout, ...rest }) => {
+  //   const Layout = require(`../layouts/${layout}`).default
+  //   return <Layout {...rest} />
+  // },
+}
+
+export const LayoutDict = {
+  PostLayout: PostLayout,
+  PostSimple: PostSimple,
+}
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -44,19 +70,25 @@ export async function getStaticProps({ params }) {
 
 export default function Blog({ post, authorDetails, prev, next }) {
   const { mdxSource, toc, frontMatter } = post
-
+  // const { frontMatter, toc, nbJSON, slug } = notebook
+  const [show, setShow] = useState(false)
+  const MDComponent = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
+  const Layout = LayoutDict[frontMatter.layout]
+  useEffect(() => setShow(true), [])
+  console.log(frontMatter.layout, Layout)
   return (
     <>
       {frontMatter.draft !== true ? (
-        <MDXLayoutRenderer
-          layout={frontMatter.layout || DEFAULT_LAYOUT}
+        <Layout
           toc={toc}
-          mdxSource={mdxSource}
           frontMatter={frontMatter}
           authorDetails={authorDetails}
-          prev={prev}
           next={next}
-        />
+          prev={prev}
+        >
+          {/* {showNB ? NBComponent : null} */}
+          {show ? <MDComponent components={MDXComponents} mdxSource={mdxSource} toc={toc} /> : null}
+        </Layout>
       ) : (
         <div className="mt-24 text-center">
           <PageTitle>

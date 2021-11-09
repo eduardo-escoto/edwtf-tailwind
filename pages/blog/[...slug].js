@@ -73,9 +73,9 @@ export default function Blog({ post, authorDetails, prev, next }) {
   // const { frontMatter, toc, nbJSON, slug } = notebook
   const [show, setShow] = useState(false)
   const MDComponent = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
-  const Layout = LayoutDict[frontMatter.layout]
+  const Layout = LayoutDict[frontMatter.layout || DEFAULT_LAYOUT]
   useEffect(() => setShow(true), [])
-  console.log(frontMatter.layout, Layout)
+
   return (
     <>
       {frontMatter.draft !== true ? (
@@ -87,7 +87,18 @@ export default function Blog({ post, authorDetails, prev, next }) {
           prev={prev}
         >
           {/* {showNB ? NBComponent : null} */}
-          {show ? <MDComponent components={MDXComponents} mdxSource={mdxSource} toc={toc} /> : null}
+          {show ? (
+            <MDComponent
+              components={MDXComponents}
+              mdxSource={mdxSource}
+              toc={toc}
+              authorDetails={authorDetails}
+              prev={prev}
+              next={next}
+              frontMatter={frontMatter}
+              layout={frontMatter.layout || DEFAULT_LAYOUT}
+            />
+          ) : null}
         </Layout>
       ) : (
         <div className="mt-24 text-center">

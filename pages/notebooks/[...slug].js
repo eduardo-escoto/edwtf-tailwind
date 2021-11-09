@@ -11,6 +11,7 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
+import { useState, useEffect, useMemo } from 'react'
 // import { useMemo } from 'react'
 // import { useEffect } from 'react'
 
@@ -51,7 +52,10 @@ export async function getStaticProps({ params }) {
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
   const { frontMatter, toc, nbJSON, slug } = notebook
-  const NBComponent = NotebookRenderer(nbJSON)
+  const [showNB, setShow] = useState(false)
+  const NBComponent = useMemo(() => NotebookRenderer(nbJSON), [nbJSON])
+  useEffect(() => setShow(true), [])
+
   return (
     <>
       {notebook.frontMatter.draft !== true ? (
@@ -62,7 +66,7 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
           prev={prev}
           slugPath={'/'}
         >
-          {NBComponent}
+          {showNB ? NBComponent : null}
         </PostLayout>
       ) : (
         <div className="mt-24 text-center">

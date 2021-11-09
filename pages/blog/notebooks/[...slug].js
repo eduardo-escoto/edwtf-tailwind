@@ -12,7 +12,7 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
-import { useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -55,7 +55,9 @@ export async function getStaticProps({ params }) {
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
   const { frontMatter, toc, nbJSON, slug } = notebook
+  const [showNB, setShow] = useState(false)
   const NBComponent = useMemo(() => NotebookRenderer(nbJSON), [nbJSON])
+  useEffect(() => setShow(true), [])
 
   return (
     <>

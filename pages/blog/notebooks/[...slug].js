@@ -63,7 +63,7 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
     <>
       {notebook.frontMatter.draft !== true ? (
         <PostLayout frontMatter={frontMatter} authorDetails={authorDetails} next={next} prev={prev}>
-          {NBComponent}
+          {showNB ? NBComponent : null}
         </PostLayout>
       ) : (
         <div className="mt-24 text-center">

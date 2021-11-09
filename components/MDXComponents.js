@@ -21,8 +21,8 @@ export const MDXComponents = {
 
 export const MDXLayoutRenderer = ({ layout, mdxSource, ...rest }) => {
   const [state, setState] = useState(false)
-  const MDXLayout = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
   useEffect(() => setState(true), [])
+  const MDXLayout = useMemo(() => getMDXComponent(mdxSource), [mdxSource])
 
   return state ? <MDXLayout layout={layout} components={MDXComponents} {...rest} /> : null
 }

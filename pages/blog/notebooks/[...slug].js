@@ -57,7 +57,6 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
   const { frontMatter, toc, nbJSON, slug } = notebook
   const NBComponent = useMemo(() => NotebookRenderer(nbJSON), [nbJSON])
 
-  // const NBRenderer = NotebookRenderer(nbJSON)
   return (
     <>
       {notebook.frontMatter.draft !== true ? (

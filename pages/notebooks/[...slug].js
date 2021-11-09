@@ -11,7 +11,8 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
-import { useMemo } from 'react'
+// import { useMemo } from 'react'
+// import { useEffect } from 'react'
 
 export async function getStaticPaths() {
   const posts = getNotebooks('notebooks')
@@ -50,7 +51,7 @@ export async function getStaticProps({ params }) {
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
   const { frontMatter, toc, nbJSON, slug } = notebook
-  const NBComponent = useMemo(() => NotebookRenderer(nbJSON), [nbJSON])
+  const NBComponent = NotebookRenderer(nbJSON)
   return (
     <>
       {notebook.frontMatter.draft !== true ? (

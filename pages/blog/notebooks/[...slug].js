@@ -1,7 +1,8 @@
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
-import { MDXLayoutRenderer } from '@/components/MDXComponents'
+import PostLayout from '@/layouts/PostLayout'
+import { NotebookRenderer } from '@/lib/renderNotebook'
 import { getFileBySlug, getAllFilesFrontMatter } from '@/lib/mdx'
 import dateSortDesc from '@/lib/utils/dateSort'
 import {
@@ -52,21 +53,15 @@ export async function getStaticProps({ params }) {
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
-  const { frontMatter, toc, nbJSON } = notebook
+  const { frontMatter, toc, nbJSON, slug } = notebook
+  const NBRenderer = NotebookRenderer(nbJSON)
   return (
     <>
       {notebook.frontMatter.draft !== true ? (
-        <p> notebook goes here </p>
+        <PostLayout frontMatter={frontMatter} authorDetails={authorDetails} next={next} prev={prev}>
+          {NBRenderer}
+        </PostLayout>
       ) : (
-        // <MDXLayoutRenderer
-        //   layout={frontMatter.draft || DEFAULT_LAYOUT}
-        //   toc={toc}
-        //   // mdxSource={mdxSource}
-        //   frontMatter={frontMatter}
-        //   authorDetails={authorDetails}
-        //   prev={prev}
-        //   next={next}
-        // />
         <div className="mt-24 text-center">
           <PageTitle>
             Under Construction{' '}

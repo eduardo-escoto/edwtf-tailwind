@@ -29,7 +29,6 @@ export async function getStaticProps({ params }) {
   const postIndex = allNotebooks.findIndex(
     (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')
   )
-  console.log(postIndex)
   const prev = allNotebooks[postIndex + 1] || null
   const next = allNotebooks[postIndex - 1] || null
   const post = await getNotebookBySlug('notebooks', params.slug.join('/'))

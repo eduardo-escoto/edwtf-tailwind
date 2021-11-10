@@ -10,6 +10,8 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
+import { getAllFilesFrontMatter } from '@/lib/mdx'
+import dateSortDesc from '@/lib/utils/dateSort'
 import rehypeParse from 'rehype-parse'
 import rehypeReact from 'rehype-react'
 import { unified } from 'unified'
@@ -30,14 +32,17 @@ export async function getStaticPaths() {
   }
 }
 const DEFAULT_LAYOUT = 'PostLayout'
+
 export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
+  const allMDX = await getAllFilesFrontMatter('blog')
+  const allPosts = [...allNotebooks, ...allMDX].sort((a, b) => dateSortDesc(a.date, b.date))
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
-  const postIndex = allNotebooks.findIndex(
+  const postIndex = allPosts.findIndex(
     (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')
   )
-  const prev = allNotebooks[postIndex + 1] || null
-  const next = allNotebooks[postIndex - 1] || null
+  const prev = allPosts[postIndex + 1] || null
+  const next = allPosts[postIndex - 1] || null
   const post = await getNotebookBySlug('notebooks', params.slug.join('/'))
   const authorList = post.authors || ['default']
   const authorPromise = authorList.map(async (author) => {
@@ -46,7 +51,7 @@ export async function getStaticProps({ params }) {
   })
   const authorDetails = await Promise.all(authorPromise)
 
-  //   // rss
+  // rss
   const rss = generateRss(allNotebooks)
   fs.writeFileSync('./public/feed.xml', rss)
 

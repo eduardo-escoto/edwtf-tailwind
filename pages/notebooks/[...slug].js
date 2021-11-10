@@ -68,8 +68,6 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
     components: comps,
   })
   const Comp = useMemo(() => pipeline.processSync(nbAST).result, [nbAST])
-  // console.log(nbAST)
-  // console.log(Comp)
   return (
     <>
       {notebook.frontMatter.draft !== true ? (

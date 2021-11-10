@@ -83,6 +83,8 @@ module.exports = {
               backgroundColor: theme('colors.gray.500'),
             },
             strong: { color: theme('colors.gray.600') },
+            table: { marginTop: '0px', marginBottom: '0px' },
+            img: { marginTop: '1em', marginBottom: '1em' },
             blockquote: {
               color: theme('colors.gray.900'),
               borderLeftColor: theme('colors.gray.200'),

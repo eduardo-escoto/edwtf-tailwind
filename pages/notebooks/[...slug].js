@@ -15,6 +15,7 @@ import rehypeReact from 'rehype-react'
 import { unified } from 'unified'
 import React from 'react'
 import Pre from '@/components/Pre'
+import Image from 'next/dist/client/image'
 
 import { useMemo } from 'react'
 
@@ -58,6 +59,7 @@ const comps = {
   body: React.Fragment,
   head: React.Fragment,
   pre: Pre,
+  img: Image,
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {

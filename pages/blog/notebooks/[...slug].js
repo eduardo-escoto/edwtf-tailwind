@@ -67,7 +67,7 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
     Fragment: React.Fragment,
     components: comps,
   })
-  const Comp = useMemo(() => pipeline.processSync(nbAST).result, [nbAST])
+  const Comp = useMemo(() => pipeline.processSync(nbAST).result, [nbAST, pipeline])
   return (
     <>
       {notebook.frontMatter.draft !== true ? (

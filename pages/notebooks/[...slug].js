@@ -1,7 +1,6 @@
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
-import { NotebookRenderer } from '@/lib/renderNotebook'
 import PostLayout from '@/layouts/PostLayout'
 import { getFileBySlug } from '@/lib/mdx'
 import {
@@ -11,9 +10,13 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
-import { useState, useEffect, useMemo } from 'react'
-// import { useMemo } from 'react'
-// import { useEffect } from 'react'
+import rehypeParse from 'rehype-parse'
+import rehypeReact from 'rehype-react'
+import { unified } from 'unified'
+import React from 'react'
+import Pre from '@/components/Pre'
+
+import { useMemo } from 'react'
 
 export async function getStaticPaths() {
   const posts = getNotebooks('notebooks')
@@ -26,7 +29,7 @@ export async function getStaticPaths() {
     fallback: false,
   }
 }
-
+const DEFAULT_LAYOUT = 'PostLayout'
 export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
@@ -50,12 +53,23 @@ export async function getStaticProps({ params }) {
   return { props: { notebook, authorDetails, prev, next } }
 }
 
-export default function Notebook({ notebook, authorDetails, prev, next }) {
-  const { frontMatter, toc, nbJSON, slug } = notebook
-  const [showNB, setShow] = useState(false)
-  const NBComponent = useMemo(() => NotebookRenderer(nbJSON), [nbJSON])
-  useEffect(() => setShow(true), [])
+const comps = {
+  html: React.Fragment,
+  body: React.Fragment,
+  head: React.Fragment,
+  pre: Pre,
+}
 
+export default function Notebook({ notebook, authorDetails, prev, next }) {
+  const { frontMatter, toc, nbJSON, slug, nbAST } = notebook
+  const pipeline = unified().use(rehypeParse).use(rehypeReact, {
+    createElement: React.createElement,
+    Fragment: React.Fragment,
+    components: comps,
+  })
+  const Comp = useMemo(() => pipeline.processSync(nbAST).result, [nbAST])
+  // console.log(nbAST)
+  // console.log(Comp)
   return (
     <>
       {notebook.frontMatter.draft !== true ? (
@@ -66,7 +80,7 @@ export default function Notebook({ notebook, authorDetails, prev, next }) {
           prev={prev}
           slugPath={'/'}
         >
-          {showNB ? NBComponent : null}
+          {Comp}
         </PostLayout>
       ) : (
         <div className="mt-24 text-center">

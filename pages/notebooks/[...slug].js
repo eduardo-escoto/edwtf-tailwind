@@ -59,7 +59,7 @@ const comps = {
   body: React.Fragment,
   head: React.Fragment,
   pre: Pre,
-  img: Image,
+  // img: (props) => <Image layout="fill" {...props} />,
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {

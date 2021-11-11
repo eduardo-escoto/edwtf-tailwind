@@ -1,6 +1,7 @@
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
+import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import PostLayout from '@/layouts/PostLayout'
 import { getFileBySlug } from '@/lib/mdx'
 import {
@@ -66,19 +67,19 @@ const comps = {
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {
-  const { frontMatter, toc, nbJSON, slug, nbAST } = notebook
-  const pipeline = unified().use(rehypeParse).use(rehypeReact, {
-    createElement: React.createElement,
-    Fragment: React.Fragment,
-    components: comps,
-  })
-  const Comp = useMemo(() => pipeline.processSync(nbAST).result, [nbAST, pipeline])
+  const { frontMatter, toc, mdxSource } = notebook
   return (
     <>
       {notebook.frontMatter.draft !== true ? (
-        <PostLayout frontMatter={frontMatter} authorDetails={authorDetails} next={next} prev={prev}>
-          {Comp}
-        </PostLayout>
+        <MDXLayoutRenderer
+          layout={frontMatter.layout || DEFAULT_LAYOUT}
+          toc={toc}
+          mdxSource={mdxSource}
+          frontMatter={frontMatter}
+          authorDetails={authorDetails}
+          prev={prev}
+          next={next}
+        />
       ) : (
         <div className="mt-24 text-center">
           <PageTitle>

@@ -1,9 +1,8 @@
-import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
-import PostLayout from '@/layouts/PostLayout'
 import { getFileBySlug } from '@/lib/mdx'
+import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import {
   getNotebooks,
   formatNotebookSlug,
@@ -11,14 +10,8 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
-import rehypeParse from 'rehype-parse'
-import rehypeReact from 'rehype-react'
-import { unified } from 'unified'
-import React from 'react'
-import Pre from '@/components/Pre'
-import Image from 'next/dist/client/image'
 
-import { useMemo } from 'react'
+const DEFAULT_LAYOUT = 'PostLayout'
 
 export async function getStaticPaths() {
   const posts = getNotebooks('notebooks')
@@ -31,7 +24,7 @@ export async function getStaticPaths() {
     fallback: false,
   }
 }
-const DEFAULT_LAYOUT = 'PostLayout'
+
 export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
@@ -55,15 +48,9 @@ export async function getStaticProps({ params }) {
   return { props: { notebook, authorDetails, prev, next } }
 }
 
-const comps = {
-  html: React.Fragment,
-  body: React.Fragment,
-  head: React.Fragment,
-  pre: Pre,
-}
-
 export default function Notebook({ notebook, authorDetails, prev, next }) {
   const { frontMatter, toc, mdxSource } = notebook
+
   return (
     <>
       {notebook.frontMatter.draft !== true ? (

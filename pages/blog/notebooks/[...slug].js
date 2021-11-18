@@ -1,9 +1,10 @@
 import fs from 'fs'
-import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
+import PageTitle from '@/components/PageTitle'
+import dateSortDesc from '@/lib/utils/dateSort'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
-import PostLayout from '@/layouts/PostLayout'
 import { getFileBySlug } from '@/lib/mdx'
+import { getAllFilesFrontMatter } from '@/lib/mdx'
 import {
   getNotebooks,
   formatNotebookSlug,
@@ -11,15 +12,8 @@ import {
   getNotebookBySlug,
   getDataSlug,
 } from '@/lib/ipynb'
-import { getAllFilesFrontMatter } from '@/lib/mdx'
-import dateSortDesc from '@/lib/utils/dateSort'
-import rehypeParse from 'rehype-parse'
-import rehypeReact from 'rehype-react'
-import { unified } from 'unified'
-import React from 'react'
-import Pre from '@/components/Pre'
 
-import { useMemo } from 'react'
+const DEFAULT_LAYOUT = 'PostLayout'
 
 export async function getStaticPaths() {
   const posts = getNotebooks('notebooks')
@@ -32,7 +26,6 @@ export async function getStaticPaths() {
     fallback: false,
   }
 }
-const DEFAULT_LAYOUT = 'PostLayout'
 
 export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
@@ -57,13 +50,6 @@ export async function getStaticProps({ params }) {
   fs.writeFileSync('./public/feed.xml', rss)
 
   return { props: { notebook, authorDetails, prev, next } }
-}
-
-const comps = {
-  html: React.Fragment,
-  body: React.Fragment,
-  head: React.Fragment,
-  pre: Pre,
 }
 
 export default function Notebook({ notebook, authorDetails, prev, next }) {

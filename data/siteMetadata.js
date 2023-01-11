@@ -1,7 +1,7 @@
 const siteMetadata = {
-  title: 'eduardo.wtf',
+  title: 'eduardo escoto',
   author: 'Eduardo Escoto',
-  headerTitle: `eduardo.wtf`,
+  headerTitle: `eduardo`,
   description: `Eduardo's corner of the internet.`,
   language: 'en-us',
   siteUrl: 'https://eduardo.wtf',

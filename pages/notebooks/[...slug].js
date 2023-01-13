@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const allNotebooks = await getAllNotebookFrontMatter('notebooks')
+  const allNotebooks = await getAllNotebookFrontMatter('notebooks').filter((post) => !post.draft)
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
   const postIndex = allNotebooks.findIndex(
     (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')
@@ -41,7 +41,7 @@ export async function getStaticProps({ params }) {
   })
   const authorDetails = await Promise.all(authorPromise)
 
-  //   // rss
+  // rss
   const rss = generateRss(allNotebooks)
   fs.writeFileSync('./public/feed.xml', rss)
 

@@ -26,7 +26,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const allNotebooks = (await getAllNotebookFrontMatter('notebooks')).filter((post) => !post.draft)
+  const allNotebooks = await getAllNotebookFrontMatter('notebooks')
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
   const postIndex = allNotebooks.findIndex(
     (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')

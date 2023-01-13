@@ -30,9 +30,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
   const allMDX = await getAllFilesFrontMatter('blog')
-  const allPosts = [...allNotebooks, ...allMDX]
-    .sort((a, b) => dateSortDesc(a.date, b.date))
-    .filter((post) => !post.draft)
+  const allPosts = [...allNotebooks, ...allMDX].sort((a, b) => dateSortDesc(a.date, b.date))
   const notebook = await getNotebookBySlug('notebooks', params.slug.join('/'))
   const postIndex = allPosts.findIndex(
     (notebook) => getDataSlug(notebook.slug) === params.slug.join('/')

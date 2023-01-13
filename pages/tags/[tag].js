@@ -30,11 +30,9 @@ export async function getStaticProps({ params }) {
   const allPosts = await getAllFilesFrontMatter('blog')
   const allNotebooks = await getAllNotebookFrontMatter('notebooks')
 
-  const filteredPosts = [...allPosts, ...allNotebooks]
-    .filter(
-      (post) => post.draft !== true && post.tags.map((t) => kebabCase(t)).includes(params.tag)
-    )
-    .filter((post) => !post.draft)
+  const filteredPosts = [...allPosts, ...allNotebooks].filter(
+    (post) => post.draft !== true && post.tags.map((t) => kebabCase(t)).includes(params.tag)
+  )
 
   // rss
   console.log(filteredPosts)
